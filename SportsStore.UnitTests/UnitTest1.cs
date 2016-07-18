@@ -44,9 +44,7 @@ namespace SportsStore.UnitTests
         [TestMethod]
         public void Can_Paginate()
         {
-            var controller = GetProductController();            
-
-            var result = (ProductsListViewModel)controller.List(2).Model;
+            var result = GetProductsListViewModel();
 
             var prodArray = result.Products.ToArray();
 
@@ -60,7 +58,7 @@ namespace SportsStore.UnitTests
         {
             HtmlHelper myHelper = null;
 
-            PagingInfo pagingInfo = new PagingInfo
+            var pagingInfo = new PagingInfo
             {
                 CurrentPage = 2,
                 TotalItems = 28,
@@ -79,9 +77,7 @@ namespace SportsStore.UnitTests
         [TestMethod]
         public void Can_Send_Pagination_View_Model()
         {
-            var controller = GetProductController();
-
-            var result = (ProductsListViewModel)controller.List(2).Model;
+            var result = GetProductsListViewModel();
 
             var pageInfo = result.PagingInfo;
             Assert.AreEqual(pageInfo.CurrentPage, 2);
@@ -90,18 +86,94 @@ namespace SportsStore.UnitTests
             Assert.AreEqual(pageInfo.TotalPages, 2);
         }
 
-        public ProductController GetProductController(int pageSize = 3)
+        [TestMethod]
+        public void Can_Filter_Products()
+        {
+            var result = GetProductsListViewModel("Plums", 3, 1).Products.ToArray();
+
+            Assert.AreEqual(result.Length, 2);
+            Assert.IsTrue(result[0].Name == "P3" && result[0].Category == "Plums");
+            Assert.IsTrue(result[1].Name == "P5" && result[1].Category == "Plums");
+        }
+
+        [TestMethod]
+        public void Can_Create_Categories()
+        {
+            var target = GetNavController();
+
+            var result = ((IEnumerable<string>)target.Menu().Model).ToArray();
+
+            Assert.AreEqual(result.Length, 3);
+            Assert.AreEqual(result[0], "Apples");
+            Assert.AreEqual(result[1], "Oranges");
+            Assert.AreEqual(result[2], "Plums");
+        }
+
+        [TestMethod]
+        public void Indicates_Selected_Category()
+        {
+            var target = GetNavController();
+
+            string categoryToSelect = "Apples";
+
+            string result = target.Menu(categoryToSelect).ViewBag.SelectedCategory;
+
+            Assert.AreEqual(categoryToSelect, result);
+
+        }
+
+        [TestMethod]
+        public void Generate_Category_Specific_product_Count()
+        {
+            var target = GetProductController();
+            target.PageSize = 3;
+
+            int res1 = ((ProductsListViewModel)target.List("Apples").Model).PagingInfo.TotalItems;
+            int res2 = ((ProductsListViewModel)target.List("Plums").Model).PagingInfo.TotalItems;
+            int res3 = ((ProductsListViewModel)target.List("Oranges").Model).PagingInfo.TotalItems;
+            int resAll = ((ProductsListViewModel)target.List(null).Model).PagingInfo.TotalItems;
+
+            Assert.AreEqual(res1, 2);
+            Assert.AreEqual(res2, 2);
+            Assert.AreEqual(res3, 1);
+            Assert.AreEqual(resAll, 5);
+        }
+
+        private ProductsListViewModel GetProductsListViewModel(string category = null, int pageSize = 3, int page = 2)
+        {
+            var mock = GetMock();
+
+            var controller = new ProductController(mock.Object) { PageSize = pageSize };
+
+            return (ProductsListViewModel)controller.List(category, page).Model; 
+        }
+
+        private ProductController GetProductController()
+        {
+            var mock = GetMock();
+
+            return new ProductController(mock.Object);
+        }
+
+        private NavController GetNavController()
+        {
+            var mock = GetMock();
+
+            return new NavController(mock.Object);
+        }
+
+        private Mock<IProductRepository> GetMock()
         {
             var mock = new Mock<IProductRepository>();
             mock.Setup(m => m.Products).Returns(new Product[] {
-                    new Product { ProductID = 1, Name = "P1" },
-                    new Product { ProductID = 2, Name = "P2" },
-                    new Product { ProductID = 3, Name = "P3" },
-                    new Product { ProductID = 4, Name = "P4" },
-                    new Product { ProductID = 5, Name = "P5" }
+                    new Product { ProductID = 1, Name = "P1", Category = "Apples" },
+                    new Product { ProductID = 2, Name = "P2", Category = "Apples" },
+                    new Product { ProductID = 3, Name = "P3", Category = "Plums" },
+                    new Product { ProductID = 4, Name = "P4", Category = "Oranges" },
+                    new Product { ProductID = 5, Name = "P5", Category = "Plums" }
                 }.AsQueryable());
 
-            return new ProductController(mock.Object) { PageSize = pageSize };
+            return mock;
         }
     }
 }

@@ -30,6 +30,28 @@ DIV#categories {
     padding: .3em;
 }
 
+DIV#categories a {
+    font: bold 1.1em "Arial Narrow", "Franklin Gothic Medium", Arial;
+    display: block;
+    text-decoration: none;
+    padding: .6em;
+    color: black;
+    border-bottom: 1px solid silver;
+}
+
+    DIV#categories a.selected {
+        background-color: #666;
+        color: white;
+    }
+
+    DIV#categories a:hover {
+        background-color: #CCC;
+    }
+
+    DIV#categories a.selected:hover {
+        background-color: #666;
+    }
+
 DIV.item {
     border-top: 1px dotted gray;
     padding-top: .7em;
@@ -126,4 +148,44 @@ textarea {
 
 .validation-summary-valid {
     display: none;
+}
+
+FORM {
+    margin: 0;
+    padding: 0;
+}
+
+DIV.item FORM {
+    float: right;
+}
+
+DIV.item INPUT {
+    color: white;
+    background-color: #333;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+table {
+    width: 90%;
+    text-align: center;
+}
+
+H2 {
+    margin-top: 0.3em;
+}
+
+TFOOT td {
+    border-top: 1px dotted gray;
+    font-weight: bold;
+}
+
+.actionButtons a, input.actionButtons {
+    font: .8em Arial;
+    color: white;
+    margin: .5em;
+    text-decoration: none;
+    padding: .15em 1.5em .2em 1.5em;
+    background-color: #353535;
+    border: 1px solid black;
 }
