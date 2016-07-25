@@ -9,6 +9,7 @@ using Moq;
 using SportsStore.Domain.Abstract;
 using SportsStore.Domain.Concrete;
 using SportsStore.Domain.Entities;
+using System.Configuration;
 
 namespace SportsStore.WebUI.Infrastructure
 {
@@ -21,15 +22,25 @@ namespace SportsStore.WebUI.Infrastructure
             ninjectKernel = new StandardKernel();
             AddBindings();
         }
+        
+        protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
+        {
+            return (controllerType == null) ? null : (IController)ninjectKernel.Get(controllerType);
+        }
 
         private void AddBindings()
         {
             ninjectKernel.Bind<IProductRepository>().To<EFProductRepository>();
-        }
 
-        protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
-        {
-            return (controllerType == null) ? null : (IController)ninjectKernel.Get(controllerType);
+            EmailSettings emailSettings = new EmailSettings
+            {
+                WriteAsFile = bool.Parse(ConfigurationManager
+                    .AppSettings["Email.WriteAsFile"] ?? "false")
+            };
+
+            ninjectKernel.Bind<IOrderProcessor>()
+                .To<EmailOrderProcessor>()
+                .WithConstructorArgument("settings", emailSettings);
         }
     }
 }
