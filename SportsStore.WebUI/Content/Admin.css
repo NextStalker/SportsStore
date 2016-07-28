@@ -14,17 +14,17 @@ DIV#content {
     padding: .9em;
 }
 
-TABLE.Grid td, TABLE.Grid th {
+table.grid td, table.grid th {
     border-bottom: 1px dotted gray;
     text-align: left;
 }
 
-table.Grid {
+table.grid {
     border-collapse: collapse;
     width: 100%;
 }
 
-    table.Grid th.NumericCol, table.Grid td.NumericCol {
+    table.grid th.numericCol, table.grid td.numericCol {
         text-align: right;
         padding-right: 1em;
     }
@@ -33,7 +33,7 @@ FORM {
     margin-bottom: 0px;
 }
 
-DIV.Message {
+DIV.message {
     background: gray;
     color: white;
     padding: .2em;
@@ -61,4 +61,25 @@ DIV.Message {
 
 .validation-summary-valid {
     display: none;
+}
+
+.editor-field {
+    margin-bottom: .8em;
+}
+
+.editor-label {
+    font-weight: bold;
+}
+
+    .editor-label::after {
+        content: ":";
+    }
+
+.text-box {
+    width: 25em;
+}
+
+.multi-line {
+    height: 5em;
+    font-family: 'Segoe UI', Verdana;
 }
