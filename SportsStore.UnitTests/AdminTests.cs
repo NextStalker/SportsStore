@@ -77,7 +77,7 @@ namespace SportsStore.UnitTests
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
             AdminController target = new AdminController(mock.Object);
             Product product = new Product { Name = "Test" };
-            ActionResult result = target.Edit(product);
+            ActionResult result = target.Edit(product, null);
 
             mock.Verify(m => m.SaveProduct(product));
 
@@ -91,7 +91,7 @@ namespace SportsStore.UnitTests
             AdminController target = new AdminController(mock.Object);
             Product product = new Product { Name = "Test" };
             target.ModelState.AddModelError("error", "error");
-            ActionResult result = target.Edit(product);
+            ActionResult result = target.Edit(product, null);
 
             mock.Verify(m => m.SaveProduct(It.IsAny<Product>()), Times.Never());
 
